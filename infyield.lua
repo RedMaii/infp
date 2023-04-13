@@ -8572,19 +8572,42 @@ addcmd('goto',{'to'},function(args, speaker)
 	execCmd('breakvelocity')
 end)
 ------------------------------------mio------------------------
-addcmd('goto7',{'to7'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		if Players[v].Character ~= nil then
-			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-				wait(.1)
-			end
-			getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)
-		end
-	end
-	execCmd('breakvelocity')
+addcmd('godrop', {'gdrop'}, function(args, speaker)
+    -- Obtener la lista de jugadores que coinciden con los argumentos
+    local players = getPlayer(args[1], speaker)
+
+    -- Comprobar si se encontró un jugador válido
+    if players[1] then
+        -- Obtener el personaje del jugador que emitió el comando
+        local character = speaker.Character
+        if not character then
+            return "No tienes un personaje para teleportar."
+        end
+        
+        -- Obtener el personaje del jugador seleccionado
+        local targetCharacter = Players[players[1]].Character
+        if not targetCharacter then
+            return "El jugador seleccionado no tiene un personaje para teleportar."
+        end
+        
+        -- Teleportar al jugador que emitió el comando al jugador seleccionado
+        local targetCFrame = targetCharacter:GetPrimaryPartCFrame()
+        local targetPosition = targetCFrame.Position - targetCFrame.LookVector * 7 -- Obtener la posición detrás del jugador
+        character:SetPrimaryPartCFrame(CFrame.new(targetPosition, targetCFrame.Position))
+        
+        -- Hacer que el personaje del jugador que emitió el comando mire hacia el torso del jugador seleccionado
+        local targetTorso = targetCharacter:FindFirstChild("Torso") or targetCharacter:FindFirstChild("UpperTorso")
+        if targetTorso then
+            local targetDirection = (targetTorso.Position - character.PrimaryPart.Position).Unit
+            character:SetPrimaryPartCFrame(CFrame.new(character.PrimaryPart.Position, character.PrimaryPart.Position + targetDirection))
+        end
+        
+        return "Te has teletransportado detrás del jugador " .. players[1] .. "."
+    else
+        return "No se encontró ningún jugador con ese nombre."
+    end
 end)
+
 ------------------------------------mio------------------------
 
 addcmd('tweengoto',{'tgoto','tto','tweento'},function(args, speaker)
