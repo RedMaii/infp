@@ -8578,35 +8578,74 @@ addcmd('godrop', {'gdrop'}, function(args, speaker)
 
     -- Comprobar si se encontró un jugador válido
     if players[1] then
-        -- Obtener el personaje del jugador que emitió el comando
-        local character = speaker.Character
-        if not character then
-            return "No tienes un personaje para teleportar."
-        end
-        
         -- Obtener el personaje del jugador seleccionado
         local targetCharacter = Players[players[1]].Character
         if not targetCharacter then
             return "El jugador seleccionado no tiene un personaje para teleportar."
         end
         
-        -- Teleportar al jugador que emitió el comando al jugador seleccionado
-        local targetCFrame = targetCharacter:GetPrimaryPartCFrame()
-        local targetPosition = targetCFrame.Position - targetCFrame.LookVector * 7 -- Obtener la posición detrás del jugador
-        character:SetPrimaryPartCFrame(CFrame.new(targetPosition, targetCFrame.Position))
-        
-        -- Hacer que el personaje del jugador que emitió el comando mire hacia el torso del jugador seleccionado
-        local targetTorso = targetCharacter:FindFirstChild("Torso") or targetCharacter:FindFirstChild("UpperTorso")
-        if targetTorso then
-            local targetDirection = (targetTorso.Position - character.PrimaryPart.Position).Unit
-            character:SetPrimaryPartCFrame(CFrame.new(character.PrimaryPart.Position, character.PrimaryPart.Position + targetDirection))
+        -- Obtener la herramienta deseada y teletransportar su Handle al jugador seleccionado
+        local toolName = args[2]
+        local tool = game.Workspace:FindFirstChild(toolName)
+        if tool then
+            local targetRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
+            if targetRootPart then
+                local toolHandle = tool:FindFirstChild("Handle")
+                if toolHandle then
+                    toolHandle.CFrame = targetRootPart.CFrame
+                else
+                    return "La herramienta seleccionada no tiene un Handle."
+                end
+            else
+                return "El jugador seleccionado no tiene un HumanoidRootPart."
+            end
+        else
+            return "No se encontró ninguna herramienta con ese nombre en el Workspace."
         end
         
-        return "Te has teletransportado detrás del jugador " .. players[1] .. "."
+        return "El Handle de la herramienta " .. toolName .. " se ha teletransportado hacia el jugador " .. players[1] .. "."
     else
         return "No se encontró ningún jugador con ese nombre."
     end
 end)
+
+addcmd('godrop2', {'gdrop2'}, function(args, speaker)
+    -- Obtener la lista de jugadores que coinciden con los argumentos
+    local players = getPlayer(args[1], speaker)
+
+    -- Comprobar si se encontró un jugador válido
+    if players[1] then
+        -- Obtener el personaje del jugador seleccionado
+        local targetCharacter = Players[players[1]].Character
+        if not targetCharacter then
+            return "El jugador seleccionado no tiene un personaje para teleportar."
+        end
+        
+        -- Obtener la herramienta deseada y teletransportar su Handle al jugador seleccionado
+        local toolName = "GlossyRPG "
+        local tool = game.Workspace:FindFirstChild(toolName)
+        if tool then
+            local targetRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
+            if targetRootPart then
+                local toolHandle = tool:FindFirstChild("Handle")
+                if toolHandle then
+                    toolHandle.CFrame = targetRootPart.CFrame
+                else
+                    return "La herramienta seleccionada no tiene un Handle."
+                end
+            else
+                return "El jugador seleccionado no tiene un HumanoidRootPart."
+            end
+        else
+            return "No se encontró ninguna herramienta con ese nombre en el Workspace."
+        end
+        
+        return "El Handle de la herramienta " .. toolName .. " se ha teletransportado hacia el jugador " .. players[1] .. "."
+    else
+        return "No se encontró ningún jugador con ese nombre."
+    end
+end)
+
 
 ------------------------------------mio------------------------
 
